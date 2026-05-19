@@ -1,6 +1,6 @@
-# Gerador de Estatísticas da Lotofácil.
+# Gerador de Estatísticas da Lotofácil
 
-Projeto pessoal de estudos de Python e estatística. Busca todos os resultados da Lotofácil direto da API da Caixa, salva num CSV local e gera uma tabela no terminal mostrando quais dezenas saíram em cada concurso e a porcentagem de aparição de cada número no período selecionado.
+Busca todos os resultados da Lotofácil direto da API da Caixa, salva num CSV local e gera uma tabela no terminal mostrando quais dezenas saíram em cada concurso e a porcentagem de aparição de cada número no período selecionado.
 
 Não busca dar ordem ao caos, foi feito apenas para praticar conceitos, testar bibliotecas e para mostrar ao meu pai quais números *não* jogar...
 
