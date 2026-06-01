@@ -2,8 +2,8 @@ import asyncio
 import httpx
 
 API_URL = "https://servicebus2.caixa.gov.br/portaldeloterias/api/lotofacil"
-CONCORRENCIA = 10
-PAUSA = 0.3
+CONCORRENCIA = 3
+PAUSA = 0.5
 
 async def buscar_ultimo() -> int:
     async with httpx.AsyncClient() as client:
@@ -15,14 +15,25 @@ async def buscar_ultimo() -> int:
 async def _buscar_concurso(client: httpx.AsyncClient, semaforo: asyncio.Semaphore, numero: int) -> list | None:
     async with semaforo:
         await asyncio.sleep(PAUSA)
-        try:
-            resposta = await client.get(f"{API_URL}/{numero}", timeout=10)
-            resposta.raise_for_status()
-            dados = resposta.json()
-            dezenas = sorted(dados["listaDezenas"])
-            return [f"C{numero}"] + dezenas
-        except httpx.HTTPError as e:
-            print(f"Erro no concurso {numero}: {e}")
+        for tentativa in range(3):
+            try:
+                resposta = await client.get(f"{API_URL}/{numero}", timeout=10)
+                resposta.raise_for_status()
+                dados = resposta.json()
+                dezenas = sorted(dados["listaDezenas"])
+                return [f"C{numero}"] + dezenas
+            except httpx.HTTPStatusError as e:
+                if e.response.status_code == 429:
+                    await asyncio.sleep(2 ** tentativa)
+                else:
+                    print(f"Erro no concurso {numero}: {e}")
+                    return None
+            except httpx.HTTPError as e:
+                if tentativa < 2 :
+                    await asyncio.sleep(2 ** tentativa)
+                else:
+                    print(f"Erro de conexão no concurso {numero}: {type(e).__name__} {e}")
+                    return None
             return None
 
 
