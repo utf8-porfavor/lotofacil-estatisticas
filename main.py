@@ -32,7 +32,7 @@ async def main():
 
     opcao = None
     while opcao != "Sair":
-        opcao = await questionary.rawselect(
+        opcao = await questionary.select(
             "O que você quer ver?",
             choices=[
                 "Últimos 10 resultados",
